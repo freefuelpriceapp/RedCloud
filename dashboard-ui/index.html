@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RedCloud Protocol // Client Dashboard Hub v2.1.0</title>
+    <style>
+        :root {
+            --bg-primary: #0a0a0c;
+            --bg-secondary: #121216;
+            --accent-red: #ff3333;
+            --text-main: #f0f0f5;
+            --text-muted: #8a8a93;
+            --border-color: #22222a;
+        }
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
+            margin: 0;
+            padding: 24px;
+        }
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 16px;
+            margin-bottom: 24px;
+        }
+        .grid-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+        }
+        .card {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .dropzone {
+            border: 2px dashed var(--accent-red);
+            padding: 40px;
+            text-align: center;
+            border-radius: 6px;
+            background: rgba(255, 51, 51, 0.02);
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+        .status-pill {
+            background: rgba(51, 255, 102, 0.1);
+            color: #33ff66;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        .shard-matrix-visual {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 6px;
+            margin-top: 16px;
+        }
+        .shard-block {
+            width: 100%;
+            height: 12px;
+            background-color: #222;
+            border-radius: 2px;
+        }
+        .shard-block.active { background-color: var(--accent-red); }
+        .shard-block.parity { background-color: #3388ff; }
+    </style>
+</head>
+<body>
+
+<div class="dashboard-container">
+    <!-- Protocol Global Control Header -->
+    <div class="header">
+        <div>
+            <h1 style="margin:0; font-size: 20px;">REDCLOUD DRIVE v2.1 🔴☁</h1>
+            <small style="color: var(--text-muted)">Network Node Gateway: United Kingdom Hub</small>
+        </div>
+        <div>
+            <span class="status-pill">● Network Node Online</span>
+        </div>
+    </div>
+
+    <div class="grid-layout">
+        <!-- Left Column: Local File Storage Client Interaction Area -->
+        <div style="display: flex; flex-direction: column; gap: 24px;">
+            <div class="card">
+                <h3>Consumer-First Privacy Storage Shield</h3>
+                <p style="color: var(--text-muted); font-size: 14px;">Drag and drop objects to execute local client-side AES-256 data protection before files leave your machine.</p>
+                
+                <div class="dropzone">
+                    <p style="margin: 0; font-weight: bold;">Drag & Drop Files Here to Shard</p>
+                    <small style="color: var(--text-muted)">Automatic Zero-Knowledge Breakdown</small>
+                </div>
+
+                <!-- Programmatic Throttling Real-time Tracking Bar -->
+                <div class="metric-row">
+                    <span>24h Upload Bandwidth Budget Used:</span>
+                    <strong>1.24 GB / 5.00 GB</strong>
+                </div>
+            </div>
+
+            <!-- Real-time Multi-Region Parity Matrix Status -->
+            <div class="card">
+                <h3>(50, 20) Reed-Solomon Erasure Coding Grid</h3>
+                <small style="color: var(--text-muted)">Slices encrypted packages into 50 distinct scattered fragments. Any 20 pieces perfectly rebuild the data.</small>
+                
+                <div class="shard-matrix-visual">
+                    <!-- 20 Core Shard Segments (Data Layer Elements) -->
+                    <!-- Generated placeholders to demonstrate structural topology matrix -->
+                    <div class="shard-block active"></div><div class="shard-block active"></div><div class="shard-block active"></div><div class="shard-block active"></div><div class="shard-block active"></div><div class="shard-block active"></div><div class="shard-block active"></div><div class="shard-block active"></div><div class="shard-block active"></div><div class="shard-block active"></div>
+                    <div class="shard-block active"></div><div class="shard-block active"></div><div class="shard-block active"></div><div class="shard-block active"></div><div class="shard-block active"></div><div class="shard-block active"></div><div class="shard-block active"></div><div class="shard-block active"></div><div class="shard-block active"></div><div class="shard-block active"></div>
+                    <!-- 30 Mathematical Parity Redundancy Blocks distributed to edge operators -->
+                    <div class="shard-block parity"></div><div class="shard-block parity"></div><div class="shard-block parity"></div><div class="shard-block parity"></div><div class="shard-block parity"></div><div class="shard-block parity"></div><div class="shard-block parity"></div><div class="shard-block parity"></div><div class="shard-block parity"></div><div class="shard-block parity"></div>
+                    <div class="shard-block parity"></div><div class="shard-block parity"></div><div class="shard-block parity"></div><div class="shard-block parity"></div><div class="shard-block parity"></div><div class="shard-block parity"></div><div class="shard-block parity"></div><div class="shard-block parity"></div><div class="shard-block parity"></div><div class="shard-block parity"></div>
+                    <div class="shard-block parity"></div><div class="shard-block parity"></div><div class="shard-block parity"></div><div class="shard-block parity"></div><div class="shard-block parity"></div><div class="shard-block parity"></div><div class="shard-block parity"></div><div class="shard-block parity"></div><div class="shard-block parity"></div><div class="shard-block parity"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Crowdsourced Hardware Infrastructure Rewards Loop -->
+        <div class="card" style="height: fit-content;">
+            <h3>$RCLOUD Mining & Node Telemetry</h3>
+            <p style="color: var(--text-muted); font-size: 14px;">Monetise the hardware you already own by turning a spare home hard drive or PC into a secure global node.</p>
+            <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 16px 0;">
+            
+            <div class="metric-row">
+                <span>Active Hardware Volume Provided:</span>
+                <strong>420.50 GB</strong>
+            </div>
+            <div class="metric-row">
+                <span>Node System Uptime:</span>
+                <strong>99.94%</strong>
+            </div>
+            <div class="metric-row">
+                <span>Accumulated Utility Yield:</span>
+                <strong style="color: var(--accent-red)">+8,452.10 $RCLOUD</strong>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
