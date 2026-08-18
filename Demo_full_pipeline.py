@@ -1,41 +1,47 @@
 """
-RedCloud Protocol – Full Pipeline Demo
-Encrypt → Real Reed-Solomon (50,20) → Simulate loss of 30 shards → Reconstruct → Decrypt
+RedCloud Protocol – Full Pipeline Demo (Indexed Shards)
+Encrypt → Real Reed-Solomon (50,20) → Lose 30 random shards → Reconstruct → Decrypt
 """
 
-import os
+import random
 from pathlib import Path
-from shard_engine import RedCloudShardEngine
+from shard_engine import RedCloudShardEngine, Shard
 
 def run_demo(input_file: str = "sample_vault.txt", output_file: str = "recovered_vault.txt"):
-    print("=== RedCloud Full Pipeline Demo ===\n")
+    print("=== RedCloud Full Pipeline Demo (Indexed) ===\n")
 
-    # 1. Create a sample file if it doesn't exist
+    # 1. Create sample file if needed
     if not Path(input_file).exists():
+        sample_content = (
+            b"RedCloud DePIN – Lifetime Secure Storage Demo\n"
+            b"This file was encrypted with AES-256-GCM, "
+            b"sharded with true Reed-Solomon (50,20), "
+            b"and successfully recovered after losing 30 shards."
+        )
         with open(input_file, "wb") as f:
-            f.write(b"RedCloud DePIN – Lifetime Secure Storage Demo\nThis file was encrypted, sharded with true Reed-Solomon, and recovered after simulated node loss.")
+            f.write(sample_content)
         print(f"Created sample file: {input_file}")
 
     # 2. Read original
     with open(input_file, "rb") as f:
         original = f.read()
-    print(f"Original file size: {len(original)} bytes\n")
+    print(f"Original size: {len(original)} bytes\n")
 
     engine = RedCloudShardEngine(data_shards=20, parity_shards=30)
 
     # 3. Encrypt
     ciphertext, key, nonce = engine.local_encrypt_payload(original)
 
-    # 4. Create shards
+    # 4. Create indexed shards
     shards = engine.create_shards(ciphertext)
-    print(f"Created {len(shards)} shards\n")
+    print(f"Created {len(shards)} indexed shards\n")
 
-    # 5. Simulate catastrophic loss – keep only 20 shards
-    surviving_shards = shards[:20]
-    print(f"Simulating loss of 30 shards – only {len(surviving_shards)} remain\n")
+    # 5. Simulate real-world loss – keep 20 random shards
+    surviving: list[Shard] = random.sample(shards, 20)
+    print(f"Simulating loss of 30 shards – kept {len(surviving)} random shards\n")
 
     # 6. Reconstruct
-    recovered_cipher = engine.reconstruct(surviving_shards, original_length=len(ciphertext))
+    recovered_cipher = engine.reconstruct(surviving, original_cipher_length=len(ciphertext))
 
     # 7. Decrypt
     recovered = engine.decrypt_payload(recovered_cipher, key, nonce)
@@ -46,12 +52,12 @@ def run_demo(input_file: str = "sample_vault.txt", output_file: str = "recovered
 
     # 9. Verify
     success = recovered == original
-    print(f"Recovered file written to: {output_file}")
+    print(f"Recovered file: {output_file}")
     print(f"Byte-for-byte match: {success}")
-    print("====================================")
+    print("============================================")
 
     if success:
-        print("✅ Pipeline successful – data survived loss of 60% of shards")
+        print("✅ SUCCESS – Data survived loss of 60% of the shards")
     else:
         print("❌ Reconstruction failed")
 
