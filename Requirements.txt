@@ -1,0 +1,3 @@
+cryptography>=42.0.0
+reedsolo>=1.7.0
+lighthouseweb3>=0.1.0
