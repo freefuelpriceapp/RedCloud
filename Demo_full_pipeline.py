@@ -1,65 +1,74 @@
 """
-RedCloud Protocol – Full Pipeline Demo (Indexed Shards)
-Encrypt → Real Reed-Solomon (50,20) → Lose 30 random shards → Reconstruct → Decrypt
+RedCloud Protocol – Complete End-to-End Pipeline Demo
+Encrypt → Shard (indexed) → Distribute → Save recovery package → Simulate loss → Recover
 """
 
+import json
 import random
+import os
 from pathlib import Path
 from shard_engine import RedCloudShardEngine, Shard
+from infrastructure_bridge import RedCloudInfrastructureBridge
 
-def run_demo(input_file: str = "sample_vault.txt", output_file: str = "recovered_vault.txt"):
-    print("=== RedCloud Full Pipeline Demo (Indexed) ===\n")
+def save_recovery_package(key: bytes, nonce: bytes, cipher_length: int, manifest: list, package_path: str = "recovery_package.json"):
+    """Save everything needed for later recovery (except the shards themselves)."""
+    package = {
+        "key_hex": key.hex(),
+        "nonce_hex": nonce.hex(),
+        "original_cipher_length": cipher_length,
+        "manifest": manifest
+    }
+    with open(package_path, "w") as f:
+        json.dump(package, f, indent=2)
+    print(f"Recovery package saved → {package_path}")
 
-    # 1. Create sample file if needed
+def run_complete_demo(input_file: str = "sample_vault.txt"):
+    print("=== RedCloud Complete Pipeline Demo ===\n")
+
+    # 1. Prepare sample file
     if not Path(input_file).exists():
-        sample_content = (
-            b"RedCloud DePIN – Lifetime Secure Storage Demo\n"
-            b"This file was encrypted with AES-256-GCM, "
-            b"sharded with true Reed-Solomon (50,20), "
-            b"and successfully recovered after losing 30 shards."
+        content = (
+            b"RedCloud DePIN – Lifetime Secure Storage\n"
+            b"This file demonstrates full client-side encryption, "
+            b"Reed-Solomon (50,20) sharding, distribution, and recovery "
+            b"after losing 60% of the shards."
         )
         with open(input_file, "wb") as f:
-            f.write(sample_content)
-        print(f"Created sample file: {input_file}")
+            f.write(content)
+        print(f"Created: {input_file}")
 
-    # 2. Read original
     with open(input_file, "rb") as f:
         original = f.read()
     print(f"Original size: {len(original)} bytes\n")
 
+    # 2. Encrypt
     engine = RedCloudShardEngine(data_shards=20, parity_shards=30)
-
-    # 3. Encrypt
     ciphertext, key, nonce = engine.local_encrypt_payload(original)
 
-    # 4. Create indexed shards
+    # 3. Create indexed shards
     shards = engine.create_shards(ciphertext)
     print(f"Created {len(shards)} indexed shards\n")
 
-    # 5. Simulate real-world loss – keep 20 random shards
-    surviving: list[Shard] = random.sample(shards, 20)
-    print(f"Simulating loss of 30 shards – kept {len(surviving)} random shards\n")
+    # 4. Distribute (sandbox by default)
+    bridge = RedCloudInfrastructureBridge()
+    manifest = bridge.distribute_shards(shards)
 
-    # 6. Reconstruct
+    # 5. Save recovery package (key + nonce + manifest)
+    save_recovery_package(key, nonce, len(ciphertext), manifest)
+
+    # 6. Simulate real-world failure – keep only 20 random shards
+    surviving = random.sample(shards, 20)
+    print(f"\nSimulating catastrophic loss: only {len(surviving)} shards remain\n")
+
+    # 7. Recover
     recovered_cipher = engine.reconstruct(surviving, original_cipher_length=len(ciphertext))
-
-    # 7. Decrypt
     recovered = engine.decrypt_payload(recovered_cipher, key, nonce)
 
     # 8. Write recovered file
+    output_file = "recovered_vault.txt"
     with open(output_file, "wb") as f:
         f.write(recovered)
 
     # 9. Verify
     success = recovered == original
-    print(f"Recovered file: {output_file}")
-    print(f"Byte-for-byte match: {success}")
-    print("============================================")
-
-    if success:
-        print("✅ SUCCESS – Data survived loss of 60% of the shards")
-    else:
-        print("❌ Reconstruction failed")
-
-if __name__ == "__main__":
-    run_demo()
+    print(f"\nRecovered file → {output_file
